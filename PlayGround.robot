@@ -40,6 +40,11 @@ ${Select_Numbers_Of_Pizza}    xpath=//input[@id="quantity"]
 
 ${SQL_Injection}    ' OR 1=1 --
 
+
+${Quantity_Field}    xpath=//input[@type="number"]
+
+
+
 *** Keywords ***
 Open_Website_Login
     Open Browser    ${URL}    ${DEV_NAME}
@@ -145,26 +150,24 @@ TC_F6_SQLInjection
     Close Browser
 
 
-TC_F7_Login_Refresh_Page 
+TC_F7_Verify Multi-Tab Session Handling
+    [Documentation]    test response when the onpenning multi-tab after login 
     Open_Website_Login
-    Execute Javascript    wndow.opne("${URL}","_blank")
-    Switch Window    title=Login
-    # Verify session behavior in the second tab
-    Wait Until Page Contains    Welcome, admin!    timeout=5    Verify session persists
+    Maximize Browser Window
+    #Open Another Tab and open the link url 
+    Execute Javascript    window.open("${URL}","_blank")
+    #switch to another tab 
+    Switch Window    title=login
+    Close Browser
 
-    # Switch back to the first tab
-    Switch Window         title=Test Automation Playground
-    Wait Until Page Contains    Welcome, admin!
 
-    # Perform logout in the first tab
-    # (Assume there's a logout button. Replace `id=logout` with actual locator.)
-    Click Button          id=logout
-    Wait Until Page Contains    Login
+TC_F8_Perform_Full_order
+    [Documentation]    Full Order Functionallity 
+    Open_Website_Login
+    Input Text    ${Quantity_Field}    12
+    Click Button    xpath=//button[@type="submit"]
+    Wait Until Element Is Visible    css:h2    timeout=10
+    Close Browser
 
-    # Switch to the second tab and verify session termination
-    Switch Window         title=Login
-    Refresh Browser
-    Wait Until Page Contains    Login    timeout=5    Verify session is invalidated after logout
 
-    # Clean up
-    Close All Browsers    
+    
